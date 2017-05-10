@@ -1,2 +1,26 @@
-import numpy
+import numpy as np
 import cv2
+
+image = cv2.imread("timg.jpg",0)
+u,s,v = np.linalg.svd(image)
+watermarking = cv2.imread("watermarking.png", 0)
+watermarking = cv2.resize(watermarking,image.shape)
+cv2.imshow("water marking", watermarking)
+cv2.waitKey()
+s = np.diag(s)
+L = s + watermarking
+u1,s1,v1 = np.linalg.svd(L)
+s1 = np.diag(s1)
+newim = np.dot(np.dot(u,s1),v)
+newim = np.uint8(newim)
+print np.allclose(image,newim)
+cv2.imshow("asd",newim)
+cv2.waitKey()
+up,sp,vp = np.linalg.svd(newim)
+sp = np.diag(sp)
+print np.allclose(s1,sp)
+F = np.dot(np.dot(u1,sp),v1)
+We = (F - s)
+We = np.uint8(We)
+cv2.imshow("asf",We)
+cv2.waitKey()
